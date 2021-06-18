@@ -19,8 +19,7 @@ class Login extends StatelessWidget {
           leading: BackButton(
             color: Colors.brown,
             onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Test()));
+              Navigator.pop(context);
             },
           ),
         ),
@@ -75,6 +74,7 @@ class Login extends StatelessWidget {
                       ),
                     ),
                     TextField(
+                      onChanged: (value) => {print(value)},
                       obscureText: true,
                       decoration: new InputDecoration(
                           focusedBorder: OutlineInputBorder(
@@ -122,7 +122,7 @@ class Login extends StatelessWidget {
                       style: TextStyle(
                           fontFamily: 'Gmarket', fontWeight: FontWeight.bold),
                     )),
-              )
+              ),
             ],
           ),
         ));
@@ -191,5 +191,37 @@ class YellowBox extends StatelessWidget {
         height: 50,
         width: 50,
         decoration: BoxDecoration(color: Colors.yellowAccent));
+  }
+}
+
+class DisplayBox extends StatefulWidget {
+  @override
+  Display createState() => Display();
+}
+
+class Display extends State<DisplayBox> {
+  var name = '';
+
+  void _onPressed(e) {
+    setState(() {
+      name = e;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Text(name),
+        Container(
+          width: 100,
+          height: 50,
+          child: TextField(
+            maxLength: 10,
+            onChanged: (e) => {_onPressed(e)},
+          ),
+        )
+      ],
+    );
   }
 }
