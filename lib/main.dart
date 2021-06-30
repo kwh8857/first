@@ -1,12 +1,23 @@
+import 'package:first/src/provider/count_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:first/src/Step1.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MaterialApp(
-    theme:
-        ThemeData(scaffoldBackgroundColor: Colors.white, fontFamily: 'Gmarket'),
-    title: 'Navigation Basics',
-    home: Test(),
-  ));
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => CounterProvider())],
+      child: MyApp()));
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Navigation Basics',
+        home: Test(),
+        theme: ThemeData(
+            scaffoldBackgroundColor: Colors.white, fontFamily: 'Gmarket'));
+  }
 }
 
 class Login extends StatelessWidget {
@@ -130,9 +141,12 @@ class Login extends StatelessWidget {
 }
 
 class Test extends StatelessWidget {
+  CounterProvider _counterProvider = CounterProvider();
   @override
   Widget build(BuildContext context) {
+    _counterProvider = Provider.of<CounterProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -162,8 +176,10 @@ class Test extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                       primary: Color(0xff42dd84), minimumSize: Size(316, 53)),
                   onPressed: () {
+                    _counterProvider.add();
+                    print(_counterProvider.count);
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Login()));
+                        MaterialPageRoute(builder: (context) => Step1()));
                   },
                   child: Text('로그인하기')),
             ),
@@ -175,6 +191,22 @@ class Test extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => Login()));
                 },
                 child: Text('회원가입하기')),
+            // GestureDetector(
+            //   onTapDown: (value) {
+            //     print(value.localPosition.dx / 400 * 100);
+            //     print(600 * (value.localPosition.dx / 400 * 100) / 100);
+            //   },
+            //   child: Container(
+            //     width: 400,
+            //     height: 300,
+            //     decoration: BoxDecoration(
+            //         color: Colors.blueAccent,
+            //         image: DecorationImage(
+            //             image: NetworkImage(
+            //                 'https://i.pinimg.com/originals/f8/76/7e/f8767e419260278ceacdcf694a50271c.jpg'),
+            //             fit: BoxFit.cover)),
+            //   ),
+            // )
           ],
         ),
       ),
