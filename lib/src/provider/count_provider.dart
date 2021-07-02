@@ -12,4 +12,9 @@ class CounterProvider extends ChangeNotifier {
     step++;
     notifyListeners();
   }
+
+  stepchange() {
+    step--;
+    notifyListeners();
+  }
 }

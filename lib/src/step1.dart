@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:first/src/nextbtn.dart';
 import 'package:first/src/step2.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 _Step1State wrapper = new _Step1State();
@@ -43,20 +42,28 @@ class _Step1State extends State<Step1> {
   _navigateAndDisplaySelection(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PhotoFactory()),
+      PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => PhotoFactory(),
+        transitionsBuilder: (c, animation, a2, child) => SlideTransition(
+          position: Tween(begin: Offset(0.0, 1.0), end: Offset(0.0, 0.0))
+              .animate(animation),
+          child: child,
+        ),
+        transitionDuration: Duration(milliseconds: 250),
+      ),
     );
     setState(() {
       profileimage = result;
     });
   }
 
-  bool checkAll() =>
-      (isPolicy && birth > 0 && gender.isNotEmpty && name.isNotEmpty);
   @override
   Widget build(BuildContext context) {
     CounterProvider counterProvider = CounterProvider();
     counterProvider = Provider.of<CounterProvider>(context);
-
+    bool checkAll() => (counterProvider.step == 1
+        ? isPolicy && birth > 0 && gender.isNotEmpty && name.isNotEmpty
+        : false);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -64,13 +71,20 @@ class _Step1State extends State<Step1> {
         leading: BackButton(
           color: Colors.white,
           onPressed: () {
-            Navigator.pop(context);
+            if (counterProvider.step == 1) {
+              Navigator.pop(context);
+            } else {
+              counterProvider.stepchange();
+              _pageController.previousPage(
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.easeOutBack);
+            }
           },
         ),
       ),
       extendBodyBehindAppBar: true,
       bottomNavigationBar: Nextbtn(
-          isNext: isNext,
+          isNext: checkAll(),
           pagecontrol: _pageController,
           coprovider: counterProvider,
           stepdata: _stepData),
